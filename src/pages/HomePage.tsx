@@ -117,7 +117,12 @@ function PageContainer() {
     }
   }, [editorRef]);
 
-  const { getRootProps, getInputProps } = useDropzone({ onDrop: handleDropFile });
+  const { getRootProps, getInputProps } = useDropzone({
+    onDrop: handleDropFile,
+    accept: {
+      'image/png': ['.png', '.jpeg'],
+    },
+  });
 
   const handleClick = (event: MouseEvent<HTMLButtonElement>) => setAnchorEl(event.currentTarget);
   const handleClose = () => setAnchorEl(null);
@@ -165,7 +170,7 @@ function PageContainer() {
   };
 
   const handleInsertMedia = (values: IEmbedLinkValues, helpers: FormikHelpers<IEmbedLinkValues>) => {
-    insertMedia('media', values.url);
+    insertMedia(values.company, values.url);
 
     helpers.resetForm();
 
@@ -276,7 +281,7 @@ function PageContainer() {
         id="fileInput"
         style={{ display: 'none' }}
         type="file"
-        accept="image/png,image/jpeg,image/jpg,image/gif"
+        accept="image/png,image/jpeg"
         onChange={handleChangeImage}
       />
     </PageWrapper>

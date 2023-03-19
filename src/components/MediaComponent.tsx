@@ -1,22 +1,24 @@
 import * as React from 'react';
 
+import parse from 'html-react-parser';
+
 const MediaComponent = ({ contentState, block }: any) => {
   const entity = contentState.getEntity(block.getEntityAt(0));
 
   const type = entity.getType();
   let { src } = entity.getData() as { src: string };
 
-  let media;
+  if (type === 'image') return <Image src={src} />;
 
-  if (type === 'image') {
-    media = <Image src={src} />;
-  } else if (type === 'media') {
-    src = src.match('youtube.com')?.input ? src.replace('watch?v=', 'embed/') : src;
+  if (type === 'Youtube') {
+    src = src.replace('watch?v=', 'embed/');
 
-    media = <IFrame src={src} />;
+    return <IFrame src={src} />;
   }
 
-  return media;
+  if (type === 'Twitch') return <IFrame src={src} />;
+
+  if (type === 'Facebook' || 'Twitter') return parse(src);
 };
 
 type MediaPropTypes = {
