@@ -3,6 +3,4 @@ declare module '@react-app-forms' {
     url: string;
     company: string;
   }
-
-  type ISocialLinkInsertValues = IEmbedLinkValues;
 }

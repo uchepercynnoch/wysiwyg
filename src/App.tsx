@@ -1,5 +1,7 @@
 import React from 'react';
+
 import { CssBaseline, StyledEngineProvider, ThemeProvider } from '@mui/material';
+
 import useAppTheme from './hooks/useAppTheme';
 import TestDraftPage from './pages/HomePage';
 

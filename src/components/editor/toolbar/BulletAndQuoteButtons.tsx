@@ -1,9 +1,12 @@
+import React, { useContext } from 'react';
+
+import { RichUtils } from 'draft-js';
+
 import { IconButton, Stack } from '@mui/material';
 import { FormatListBulleted, FormatListNumbered, FormatQuote } from '@mui/icons-material';
-import React, { useContext } from 'react';
+
 import EditorContext from '../../../context/EditorContext';
 import { IEditorContextProps } from '@app-react-app-context';
-import { RichUtils } from 'draft-js';
 
 const BulletAndQuoteButtons = () => {
   const { editorState, setEditorState } = useContext(EditorContext) as IEditorContextProps;

@@ -1,7 +1,8 @@
 import React, { memo, ReactNode, useRef } from 'react';
-import { AppBar, Dialog, DialogContent, DialogTitle, IconButton, Toolbar } from '@mui/material';
 
+import { AppBar, Dialog, DialogContent, DialogTitle, IconButton, Toolbar } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
+
 import TransitionUp from './TransitionUp';
 
 interface IProps {

@@ -1,5 +1,9 @@
 import React, { ChangeEvent, MouseEvent, useCallback, useRef, useState } from 'react';
-import { AtomicBlockUtils, ContentBlock, convertToRaw, Editor, EditorState, RichUtils } from 'draft-js';
+
+import Editor from '@draft-js-plugins/editor';
+import createCounterPlugin from '@draft-js-plugins/counter';
+import { AtomicBlockUtils, ContentBlock, convertToRaw, EditorState, RichUtils } from 'draft-js';
+
 import PageWrapper from '../containers/PageWrapper';
 import {
   Box,
@@ -17,6 +21,10 @@ import {
 } from '@mui/material';
 import { grey } from '@mui/material/colors';
 import AddIcon from '@mui/icons-material/Add';
+
+import { useDropzone } from 'react-dropzone';
+import { Formik, FormikHelpers } from 'formik';
+
 import AppDialog from '../components/AppDialog';
 import MediaComponent from '../components/MediaComponent';
 import AlignmentButtons from '../components/editor/toolbar/AlignmentButtons';
@@ -25,19 +33,22 @@ import BulletAndQuoteButtons from '../components/editor/toolbar/BulletAndQuoteBu
 import BoldAndItalicsButtons from '../components/editor/toolbar/BoldAndItalicsButtons';
 import LinkAndPictureButtons from '../components/editor/toolbar/LinkAndPictureButtons';
 import ActionButtonPopover from '../components/editor/ActionButtonPopover';
-import { useDropzone } from 'react-dropzone';
-import { Formik, FormikHelpers } from 'formik';
 import EmbedLinkForm from '../components/forms/EmbedLinkForm';
 import { IEmbedLinkValues } from '@react-app-forms';
 import EditorContext from '../context/EditorContext';
+import { blockStyleFn } from '../utils';
 
 const VIDEO_OPTIONS = ['Youtube', 'Twitch'];
 const SOCIAL_OPTIONS = ['Facebook', 'Twitter'];
+const WORDS_LIMIT = 1000;
 
 const embedValues: IEmbedLinkValues = {
   company: '',
   url: '',
 };
+
+const counterPlugin = createCounterPlugin();
+const { CharCounter } = counterPlugin;
 
 function PageContainer() {
   const [editorState, setEditorState] = useState<EditorState>(EditorState.createEmpty());
@@ -62,24 +73,6 @@ function PageContainer() {
         },
       };
     }
-  };
-
-  const blockStyleFn = (contentBlock: ContentBlock) => {
-    const type = contentBlock.getType();
-
-    if (type === 'left') {
-      return 'align-left';
-    }
-
-    if (type === 'right') {
-      return 'align-right';
-    }
-
-    if (type === 'center') {
-      return 'align-center';
-    }
-
-    return '';
   };
 
   const insertMedia = useCallback(
@@ -117,6 +110,12 @@ function PageContainer() {
     },
     [insertMedia]
   );
+
+  const focusEditor = useCallback(() => {
+    if (editorRef.current) {
+      editorRef.current.focus();
+    }
+  }, [editorRef]);
 
   const { getRootProps, getInputProps } = useDropzone({ onDrop: handleDropFile });
 
@@ -198,15 +197,18 @@ function PageContainer() {
                   </Stack>
                 </EditorContext.Provider>
               </Paper>
-              <Editor
-                ref={editorRef}
-                blockRendererFn={renderBlock}
-                blockStyleFn={blockStyleFn}
-                editorState={editorState}
-                handleKeyCommand={handleKeyCommand}
-                onChange={onChange}
-                placeholder="Click to start typing..."
-              />
+              <Box onClick={focusEditor}>
+                <Editor
+                  ref={editorRef}
+                  blockRendererFn={renderBlock}
+                  blockStyleFn={blockStyleFn}
+                  editorState={editorState}
+                  handleKeyCommand={handleKeyCommand}
+                  onChange={onChange}
+                  placeholder="Click to start typing..."
+                  plugins={[counterPlugin]}
+                />
+              </Box>
             </CardContent>
             <CardActions disableSpacing>
               <IconButton onClick={handleClick} sx={{ border: '0.1px solid' }} size="small" color="success">
@@ -230,7 +232,15 @@ function PageContainer() {
                 }}
               >
                 <Box sx={{ flexGrow: 1 }} />
-                <Typography variant="caption">0/1000 words</Typography>
+
+                <Typography variant="caption">
+                  <CharCounter
+                    //@ts-ignore
+                    editorState={editorState}
+                    limit={WORDS_LIMIT}
+                  />
+                  /{`${WORDS_LIMIT} words`}
+                </Typography>
               </Box>
             </CardContent>
           </Card>
