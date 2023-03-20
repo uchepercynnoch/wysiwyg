@@ -2,6 +2,7 @@ import React, { ChangeEvent, MouseEvent, useCallback, useRef, useState } from 'r
 
 import Editor from '@draft-js-plugins/editor';
 import createCounterPlugin from '@draft-js-plugins/counter';
+
 import { AtomicBlockUtils, ContentBlock, convertToRaw, EditorState, RichUtils } from 'draft-js';
 
 import PageWrapper from '../containers/PageWrapper';
@@ -48,7 +49,10 @@ const embedValues: IEmbedLinkValues = {
 };
 
 const counterPlugin = createCounterPlugin();
+
 const { CharCounter } = counterPlugin;
+
+const plugins = [counterPlugin];
 
 function PageContainer() {
   const [editorState, setEditorState] = useState<EditorState>(EditorState.createEmpty());
@@ -76,7 +80,7 @@ function PageContainer() {
   };
 
   const insertMedia = useCallback(
-    (type: string, value: any) => {
+    (type: string, value: unknown) => {
       const contentStateWithEntity = editorState.getCurrentContent().createEntity(type, 'IMMUTABLE', { src: value });
       setEditorState(
         AtomicBlockUtils.insertAtomicBlock(
@@ -211,7 +215,7 @@ function PageContainer() {
                   handleKeyCommand={handleKeyCommand}
                   onChange={onChange}
                   placeholder="Click to start typing..."
-                  plugins={[counterPlugin]}
+                  plugins={plugins}
                 />
               </Box>
             </CardContent>

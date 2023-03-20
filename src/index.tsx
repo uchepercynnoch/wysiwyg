@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
-import 'draft-js/dist/Draft.css';
+import '@draft-js-plugins/static-toolbar/lib/plugin.css';
 import './assets/css/App.css';
 
 import App from './App';
